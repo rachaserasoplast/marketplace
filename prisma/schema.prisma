@@ -1,0 +1,34 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum Condition {
+  New
+  Used
+}
+
+model Product {
+  id        Int       @id @default(autoincrement())
+  name      String
+  slug      String?   @unique
+  category  String
+  condition Condition
+  price     Float
+  specs     String
+  image     String
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  username String @unique
+  password String
+}
+
+model Test {
+  id Int @id @default(autoincrement())
+}
