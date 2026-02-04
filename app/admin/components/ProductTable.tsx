@@ -205,7 +205,7 @@ export default function ProductTable() {
               </thead>
               <tbody>
                 {paged.map((p) => (
-                  <tr key={p.slug ?? p.id} className="border-b hover:bg-slate-50">
+                  <tr key={p.id} className="border-b hover:bg-slate-50">
                     <td className="py-3">
                       <div className="flex items-center gap-3">
                         <img src={p.images?.[0] || (p as any).image} alt={p.name} className="h-12 w-12 object-cover rounded" />
@@ -237,27 +237,28 @@ export default function ProductTable() {
           {/* Mobile Card View */}
           <div className="block md:hidden space-y-4">
             {paged.map((p) => (
-              <div key={p.slug ?? p.id} className="bg-white border rounded-lg p-4 shadow-sm">
-                <div className="flex items-start gap-4">
-                  <img src={p.images?.[0] || (p as any).image} alt={p.name} className="h-16 w-16 object-cover rounded flex-shrink-0" />
+              <div key={p.id} className="bg-white border rounded-lg p-4 shadow-sm">
+                <div className="flex items-start gap-3">
+                  <img src={p.images?.[0] || (p as any).image} alt={p.name} className="h-20 w-20 object-cover rounded-lg flex-shrink-0" />
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-medium text-gray-900 truncate">{p.name}</h3>
-                    <p className="text-sm text-gray-500 truncate">{p.slug}</p>
-                    <div className="mt-2 flex items-center justify-between">
-                      <span className="text-lg font-semibold text-gray-900">₱{Number(p.price).toLocaleString()}</span>
-                      <span className={`px-2 py-1 rounded text-xs ${p.published ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-slate-600'}`}>
-                        {p.published ? 'Published' : 'Unpublished'}
+                    <h3 className="font-semibold text-gray-900 text-base leading-tight mb-1">{p.name}</h3>
+                    <p className="text-sm text-gray-500 mb-2 truncate">{p.slug}</p>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xl font-bold text-gray-900">₱{Number(p.price).toLocaleString()}</span>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${p.published ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-slate-600'}`}>
+                        {p.published ? 'Published' : 'Draft'}
                       </span>
                     </div>
-                    <div className="mt-2 flex items-center gap-4 text-sm text-gray-600">
-                      <span>{p.category}</span>
-                      <span>•</span>
-                      <span>{p.condition}</span>
+                    <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
+                      <span className="bg-blue-50 text-blue-700 px-2 py-1 rounded">{p.category}</span>
+                      <span className="bg-orange-50 text-orange-700 px-2 py-1 rounded">{p.condition}</span>
                     </div>
-                    <div className="mt-3 flex items-center gap-2">
-                      <button onClick={() => openEdit(p)} className="px-3 py-1 bg-blue-100 text-blue-700 rounded text-sm font-medium">Edit</button>
-                      <button onClick={() => doDeleteImmediate(p)} className="px-3 py-1 bg-red-100 text-red-700 rounded text-sm font-medium">Delete</button>
-                      <button onClick={() => setViewing(p)} className="px-3 py-1 bg-white border border-gray-300 text-gray-700 rounded text-sm font-medium">View</button>
+                    <div className="flex flex-col gap-2">
+                      <div className="flex gap-2">
+                        <button onClick={() => openEdit(p)} className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">Edit</button>
+                        <button onClick={() => setViewing(p)} className="flex-1 px-4 py-2 bg-gray-600 text-white rounded-lg text-sm font-medium hover:bg-gray-700 transition-colors">View</button>
+                      </div>
+                      <button onClick={() => doDeleteImmediate(p)} className="w-full px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors">Delete</button>
                     </div>
                   </div>
                 </div>

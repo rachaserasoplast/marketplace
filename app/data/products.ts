@@ -53,20 +53,30 @@ export type Product = {
   published?: boolean;
 };
 
+// Helper function to parse images from DB (JSON string) to array
+function parseImages(images: string | string[]): string[] {
+  if (Array.isArray(images)) return images;
+  try {
+    return JSON.parse(images);
+  } catch {
+    return [];
+  }
+}
+
 // Get all products from database
 export async function getProducts(): Promise<Product[]> {
-  // If DB configured, use only database
-  if (process.env.DATABASE_URL) {
+  // If DB configured and prisma is available, use database
+  if (process.env.DATABASE_URL && prisma) {
     try {
       const dbProducts = await prisma.product.findMany();
       return dbProducts;
     } catch (error) {
       console.error("Error fetching products from database:", error);
-      return [];
+      // Fall through to filesystem fallback
     }
   }
 
-  // Fallback to filesystem-backed JSON if no DB
+  // Fallback to filesystem-backed JSON if no DB or DB failed
   const productsPath = require("path").join(process.cwd(), "app/data/products.json");
   const fs = require("fs");
   try {
@@ -153,10 +163,28 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
 // Add a new product to database
 export async function addProduct(product: Omit<Product, "id">): Promise<Product | null> {
   try {
-    const newProduct = await prisma.product.create({
-      data: product,
-    });
-    return newProduct;
+    if (prisma) {
+      const newProduct = await prisma.product.create({
+        data: product,
+      });
+      return newProduct;
+    }
+    // Fallback to filesystem
+    const productsPath = require("path").join(process.cwd(), "app/data/products.json");
+    const fs = require("fs");
+    try {
+      if (fs.existsSync(productsPath)) {
+        const data = fs.readFileSync(productsPath, "utf-8");
+        const parsed = JSON.parse(data) as Product[];
+        const newProduct = { ...product, id: Math.max(...parsed.map(p => p.id), 0) + 1 };
+        parsed.push(newProduct);
+        fs.writeFileSync(productsPath, JSON.stringify(parsed, null, 2));
+        return newProduct;
+      }
+    } catch (e) {
+      console.error("Error adding to products.json:", e);
+    }
+    return null;
   } catch (error) {
     console.error("Error adding product:", error);
     return null;

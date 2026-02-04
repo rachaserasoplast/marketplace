@@ -13,13 +13,13 @@ enum Condition {
 
 model Product {
   id        Int       @id @default(autoincrement())
-  name      String
+  name      String    @unique
   slug      String?   @unique
   category  String
   condition Condition
   price     Float
   specs     String
-  image     String
+  images    String    // JSON string of image URLs array
 }
 
 model User {

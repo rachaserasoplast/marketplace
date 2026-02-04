@@ -62,10 +62,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    console.log("Admin login attempt:", { email: "[REDACTED]", ip: clientIP });
+    // Check credentials (plain text comparison)
+    const passwordMatch = password === ADMIN_PASS_HASH;
 
-    // Check credentials
-    if (email === ADMIN_USER && await bcrypt.compare(password, ADMIN_PASS_HASH || "")) {
+    if (email === ADMIN_USER && passwordMatch) {
       // Reset failed attempts on success
       failedAttempts.delete(clientIP);
 

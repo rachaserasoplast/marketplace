@@ -47,30 +47,54 @@ export async function POST(req: NextRequest) {
       products = [];
     }
 
-    // Add new product
+    // Check if product with same name already exists (Lazada-style: one product per name)
+    // Use slug comparison for better matching (handles spaces, special chars, case)
     const slugify = (s: string) =>
       s
         .toLowerCase()
+        .trim()
         .replace(/[^a-z0-9]+/g, "-")
-        .replace(/(^-|-$)+/g, "")
-        .slice(0, 200);
+        .replace(/(^-|-$)+/g, "");
 
     const baseSlug = slugify(name);
-    const uniqueSlug = `${baseSlug}-${Date.now()}`;
+    const existingProductIndex = products.findIndex((p: any) => p.slug.startsWith(baseSlug));
 
-    const newProduct = {
-      id: Date.now(),
-      name,
-      slug: uniqueSlug,
-      category,
-      condition,
-      price: Number(price),
-      specs,
-      images: imagePaths,
-      published: true,
-    };
+    let product;
+    if (existingProductIndex !== -1) {
+      // Update existing product: append new images to existing ones, update other fields
+      product = products[existingProductIndex];
+      product.images = Array.isArray(product.images) ? [...product.images, ...imagePaths] : imagePaths;
+      product.category = category;
+      product.condition = condition;
+      product.price = Number(price);
+      product.specs = specs;
+      // Keep existing slug and id
+    } else {
+      // Create new product
+      const slugify = (s: string) =>
+        s
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/(^-|-$)+/g, "")
+          .slice(0, 200);
 
-    products.push(newProduct);
+      const baseSlug = slugify(name);
+      const uniqueSlug = `${baseSlug}-${Date.now()}`;
+
+      product = {
+        id: Date.now(),
+        name,
+        slug: uniqueSlug,
+        category,
+        condition,
+        price: Number(price),
+        specs,
+        images: imagePaths,
+        published: true,
+      };
+
+      products.push(product);
+    }
 
     // Write updated products.json
     await writeFile(productsPath, JSON.stringify(products, null, 2));
@@ -80,13 +104,13 @@ export async function POST(req: NextRequest) {
       const { addProduct } = await import("../../../data/products");
       // pass product data without id (DB will create its own id)
       await addProduct({
-        name: newProduct.name,
-        slug: newProduct.slug,
-        category: newProduct.category,
-        condition: newProduct.condition,
-        price: newProduct.price,
-        specs: newProduct.specs,
-        images: newProduct.images,
+        name: product.name,
+        slug: product.slug,
+        category: product.category,
+        condition: product.condition,
+        price: product.price,
+        specs: product.specs,
+        images: product.images,
       } as any);
     } catch (e) {
       // ignore - DB may not be configured in this environment
@@ -94,7 +118,7 @@ export async function POST(req: NextRequest) {
       console.warn("Could not persist new product to DB:", errMsg);
     }
 
-    return NextResponse.json({ success: true, product: newProduct });
+    return NextResponse.json({ success: true, product });
   } catch (err) {
     console.error(err);
     return NextResponse.json(

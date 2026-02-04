@@ -25,13 +25,13 @@ export default function CheckoutForm() {
         <div className="space-y-4">
           <div className="divide-y">
             {items.map((it) => (
-              <div key={it.id} className="py-3 flex justify-between">
+              <div key={it.id} className="py-3 flex flex-col sm:flex-row sm:justify-between">
                 <div>
                   <p className="font-medium">{it.name}</p>
                   <p className="text-sm text-slate-500">{it.quantity} × ₱{it.price.toLocaleString()}</p>
                 </div>
 
-                <p className="font-semibold">₱{(it.price * it.quantity).toLocaleString()}</p>
+                <p className="font-semibold mt-1 sm:mt-0">₱{(it.price * it.quantity).toLocaleString()}</p>
               </div>
             ))}
           </div>

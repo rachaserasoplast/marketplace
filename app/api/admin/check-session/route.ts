@@ -4,7 +4,7 @@ export async function GET(req: NextRequest) {
   try {
     const session = req.cookies.get("admin_session");
 
-    if (session?.value === "logged_in") {
+    if (session?.value && session.value.length > 0) {
       return NextResponse.json({ authenticated: true });
     }
 

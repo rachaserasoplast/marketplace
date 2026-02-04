@@ -234,7 +234,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-4 md:p-8">
+      <div className="flex-1 p-3 md:p-8 overflow-x-hidden">
         {/* Mobile Menu Button */}
         <div className="md:hidden mb-4">
           <button
@@ -248,11 +248,11 @@ export default function AdminDashboard() {
         </div>
         {activeMenu === "dashboard" && (
           <div>
-            <div className="flex items-center justify-between mb-8">
-              <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 md:mb-8 gap-4">
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Dashboard</h1>
               <button
                 onClick={fetchProducts}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center gap-2"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center justify-center gap-2 text-sm md:text-base"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -260,14 +260,16 @@ export default function AdminDashboard() {
                 Refresh
               </button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-2 lg:grid-cols-3 md:gap-6">
               {statsCards.map((card, index) => (
-                <div key={index} className={`bg-gradient-to-r ${card.bgColor} p-6 rounded-lg shadow-md`}>
-                  <div className={`w-12 h-12 bg-gradient-to-r ${card.color} rounded-full flex items-center justify-center mb-4`}>
-                    {card.icon}
+                <div key={index} className={`bg-gradient-to-r ${card.bgColor} p-3 md:p-6 rounded-lg shadow-md`}>
+                  <div className={`w-8 h-8 md:w-12 md:h-12 bg-gradient-to-r ${card.color} rounded-full flex items-center justify-center mb-2 md:mb-4 mx-auto md:mx-0`}>
+                    <div className="w-4 h-4 md:w-6 md:h-6">
+                      {card.icon}
+                    </div>
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-800">{card.title}</h3>
-                  <p className="text-3xl font-bold text-gray-900">{card.value}</p>
+                  <h3 className="text-xs md:text-lg font-semibold text-gray-800 mb-1 text-center md:text-left">{card.title}</h3>
+                  <p className="text-lg md:text-3xl font-bold text-gray-900 text-center md:text-left">{card.value}</p>
                 </div>
               ))}
             </div>

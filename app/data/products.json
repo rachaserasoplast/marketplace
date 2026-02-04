@@ -1,1 +1,29 @@
-[]
+[
+  {
+    "id": 1770181343400,
+    "name": "HP ",
+    "slug": "hp-1770181343400",
+    "category": "brand-new",
+    "condition": "New",
+    "price": 20000,
+    "specs": "8gb RAM ",
+    "images": [
+      "/uploads/1770181343394-IMG_20260204_120044.jpg",
+      "/uploads/1770181343396-IMG_20260204_120034.jpg"
+    ],
+    "published": true
+  },
+  {
+    "name": "HP ",
+    "slug": "hp-1770181343400",
+    "category": "brand-new",
+    "condition": "New",
+    "price": 20000,
+    "specs": "8gb RAM ",
+    "images": [
+      "/uploads/1770181343394-IMG_20260204_120044.jpg",
+      "/uploads/1770181343396-IMG_20260204_120034.jpg"
+    ],
+    "id": 1770181343401
+  }
+]

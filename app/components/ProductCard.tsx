@@ -41,7 +41,7 @@ export default function ProductCard({ product }: { product: Product }) {
           <div className="flex-1"></div>
         </div>
 
-        <div className="mt-4 grid grid-cols-2 gap-2">
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
           <AddToCartButton product={product} size="small" />
           <Link
             href={`/product/${product.slug ?? product.id}`}
