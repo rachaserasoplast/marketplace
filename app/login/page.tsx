@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 export default function LoginPage() {
   const router = useRouter();
   const search = useSearchParams();
-  const next = search?.get("next") ?? "/";
+  const next = search?.get("next") ?? "/dashboard";
   const message = search?.get("message");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

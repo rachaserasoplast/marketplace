@@ -1,23 +1,37 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import rateLimit from "express-rate-limit";
-import { body, validationResult } from "express-validator";
 
-// Rate limiting for signup (3 attempts per hour)
-const limiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
-  max: 3, // limit each IP to 3 requests per windowMs
-  message: "Too many signup attempts, please try again later.",
-  standardHeaders: true,
-  legacyHeaders: false,
-});
+// Simple in-memory rate limiting for Next.js
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+
+function checkRateLimit(ip: string, maxRequests: number = 3, windowMs: number = 60 * 60 * 1000): boolean {
+  const now = Date.now();
+  const userLimit = rateLimitMap.get(ip);
+
+  if (!userLimit || now > userLimit.resetTime) {
+    rateLimitMap.set(ip, { count: 1, resetTime: now + windowMs });
+    return true;
+  }
+
+  if (userLimit.count >= maxRequests) {
+    return false;
+  }
+
+  userLimit.count++;
+  return true;
+}
 
 export async function POST(req: NextRequest) {
   try {
+    // Get client IP for rate limiting
+    const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+
     // Apply rate limiting
-    const rateLimitResult = await limiter(req as any);
-    if (rateLimitResult) {
-      return rateLimitResult;
+    if (!checkRateLimit(ip)) {
+      return NextResponse.json(
+        { success: false, message: "Too many signup attempts, please try again later." },
+        { status: 429 }
+      );
     }
 
     const { email, password, username } = await req.json();
